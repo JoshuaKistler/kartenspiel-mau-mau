@@ -1,8 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { createAndShuffleDeck, drawCards } from "@/lib/deckApi";
 import CardList from "@/components/CardList";
+=======
+import { createAndShuffleDeck, drawCards } from "@/lib/deckapi";
+import { Card as CardType } from "@/lib/card";
+import CardList from "@/components/cardlist";
+>>>>>>> aa630b0aff0500cfb389699945beafde60bf0031
 import Controls from "@/components/Controls";
 import Card from "@/components/Card";
 
@@ -22,7 +28,20 @@ export default function Home() {
   const [message, setMessage] = useState<string>("");
   const [isPlayerTurn, setIsPlayerTurn] = useState<boolean>(true);
 
+  // Setup/Restart Funktion
+  const setupGame = async () => {
+    const deck = await createAndShuffleDeck();
+    setDeckId(deck.deck_id);
+
+    const draw = await drawCards(deck.deck_id, 6);
+    const cards = draw.cards;
+    setPlayerHand(cards.slice(0, 5));
+    setDiscardPile([cards[5]]);
+    setMessage("");
+  };
+
   useEffect(() => {
+<<<<<<< HEAD
     const setupGame = async () => {
       const deck = await createAndShuffleDeck();
       setDeckId(deck.deck_id);
@@ -34,6 +53,8 @@ export default function Home() {
       setDiscardPile([cards[10]]);
     };
 
+=======
+>>>>>>> aa630b0aff0500cfb389699945beafde60bf0031
     setupGame();
   }, []);
 
@@ -99,24 +120,45 @@ export default function Home() {
     setIsPlayerTurn(true);
   };
 
+  // Restart-Button Funktion
+  const restartGame = () => {
+    setupGame();
+  };
+
   return (
     <main className="min-h-screen bg-green-800 text-white p-6 text-center">
       <h1 className="text-4xl font-bold mb-4">🃏 Mau Mau</h1>
       <p className="mb-2">{message}</p>
 
-      {/* Ablagestapel */}
-      {discardPile.length > 0 && (
-        <div className="mb-4">
-          <p className="font-semibold mb-1">Ablagestapel:</p>
-          <Card image={discardPile[discardPile.length - 1].image} />
+      {/* Win-Screen */}
+      {playerHand.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-96">
+          <h2 className="text-3xl font-bold mb-4 text-yellow-300">🎉 Gewonnen! 🎉</h2>
+          <p className="text-lg mb-4">Du hast alle Karten abgelegt.</p>
+          <button
+            onClick={restartGame}
+            className="bg-yellow-400 hover:bg-yellow-500 text-green-900 font-bold py-2 px-6 rounded"
+          >
+            Neu starten
+          </button>
         </div>
+      ) : (
+        <>
+          {/* Ablagestapel */}
+          {discardPile.length > 0 && (
+            <div className="mb-4">
+              <p className="font-semibold mb-1">Ablagestapel:</p>
+              <Card image={discardPile[discardPile.length - 1].image} />
+            </div>
+          )}
+
+          {/* Spielerhand */}
+          <CardList cards={playerHand} onPlayCard={playCard} />
+
+          {/* Karte ziehen */}
+          <Controls onDraw={drawCard} />
+        </>
       )}
-
-      {/* Spielerhand */}
-      <CardList cards={playerHand} onPlayCard={playCard} />
-
-      {/* Karte ziehen */}
-      <Controls onDraw={drawCard} />
     </main>
   );
 }
