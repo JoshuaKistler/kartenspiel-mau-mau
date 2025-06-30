@@ -1,10 +1,4 @@
-// components/Controls.tsx
-
-interface Props {
-    onDraw: () => void;
-  }
-  
-  export default function Controls({ onDraw }: Props) {
+export default function Controls({ onDraw }: { onDraw: () => void }) {
     return (
       <div className="mt-6">
         <button
